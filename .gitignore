@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!*.py
+!*.ipynb
+
+# Include directories to check inside them
+!*/
+yllib/  # Ignore all contents of yllib, handled by its own .git repository
