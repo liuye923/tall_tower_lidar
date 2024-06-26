@@ -4,27 +4,23 @@ import multiprocessing as mp
 
 
 def convert_file_batch(file):
-    file_rp = file.split("/e5.oper.an.sfc/")[1]
-    folder = 'sfc/' + '/'.join(file_rp.split('/')[:1])
-    target_path = f"./sfc/{file_rp}" 
+    file_rp = file.split("/ERA5_processed/")[1]
+    folder = '/'.join(file_rp.split('/')[:2])
+    target_path = f"./{file_rp}" 
 #
     myfile = Path(target_path)
-    if myfile.is_file():
-        if myfile.stat().st_size < 1 * 1024 * 1024: os.system(f'rm -f {myfile}')
-       
     if not myfile.is_file():
         os.system(f'mkdir -p {folder}')
-#        print(f"cdo -sellonlatbox,-127,-116,41,50 {file} {target_path}")
         os.system(f"cdo -sellonlatbox,-127,-116,41,50 {file} {target_path}>/dev/null")
 
     return True
 
 
-#files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5_processed/[uvzt]*/**/*.nc")
-files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5/e5.oper.an.sfc/**/*.nc")
+files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5_processed/[uvzt]*/**/*.nc")
+#files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5/e5.oper.an.sfc/**/*.nc")
 
 print(len(files))
-cks = 128
+cks = 2
 sublists =  [files[i:i+cks] for i in range(0, len(files), cks)]
 #sublists =  [files[i:i+cks] for i in range(0, 10, cks)]
 
