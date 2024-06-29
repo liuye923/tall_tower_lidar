@@ -1,0 +1,12 @@
+*.png
+*.txt
+*.pt
+*.ipynb
+*.npy
+*.nc
+*/__pycache__/
+*/.ipynb_checkpoints/
+/.ipynb_checkpoints/
+*.tmp
+*.out
+*.log
