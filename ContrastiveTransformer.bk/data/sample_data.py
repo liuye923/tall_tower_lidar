@@ -23,9 +23,10 @@ def load_and_norm_single_variable(data_dir, var, vname, time=None, da_min=None, 
         my_vmax = np.maximum(da_max, -1*da_min)
         vmax, vmin = my_vmax, -1*my_vmax
         
+        logging.debug(f'{var}: {vmin}, {vmax}')
+   
         out = (da - vmin) / (vmax - vmin)
-
-        logging.debug(f'{var}: {vmin}, {vmax}, {out.shape}')
+        print(out.shape)
     return out
 
 def load_and_norm_netcdf_data(data_dir, vrange, time=None):
@@ -52,27 +53,6 @@ def load_and_norm_netcdf_data(data_dir, vrange, time=None):
 
 def save_preprocessed_data(data, save_path):
     np.save(save_path, data)
-
-def prepare_met(
-        data_dir='../ERA5_reduced/', 
-        save_path='data/processed/preprocessed_data.2001-2020.npy',
-        save_idx_path='data/processed/preprocessed_data.time.2001-2020.csv',
-        time_range=("2001-01-01 00:00:00", "2020-12-31 23:00:00"),
-):
-    range_path = f"{data_dir}/global_range.2001-2020.csv"
-    logging.info(f"Extrating data from {data_dir} for the period of {time_range[0]}-{time_range[1]}")
-
-    vrange = pd.read_csv(range_path, index_col=0)
-    print(vrange)
-    data, time = load_and_norm_netcdf_data(
-        data_dir, 
-        vrange,
-        time_range, 
-    )
-    save_preprocessed_data(data, save_path)
-    pd.Series(time).to_csv(save_idx_path)
-
-
 
 if __name__ == "__main__":
     data_dir = '../ERA5_reduced/'

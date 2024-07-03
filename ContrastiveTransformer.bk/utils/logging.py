@@ -9,10 +9,6 @@ def set_logging_level(level_str):
         'DEBUG': logging.DEBUG,
         'NOTSET': logging.NOTSET
     }
-
     logging_level = level_dict.get(level_str.upper(), logging.INFO)
     logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info(f'Set logging level to {level_str.upper()}')
-    logging.debug(f'Set logging level to {level_str.upper()}')
-
 

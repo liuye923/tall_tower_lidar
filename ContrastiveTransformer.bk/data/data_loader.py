@@ -59,13 +59,14 @@ class CustomDataset(Dataset):
             _preprocessed_data = ssignal.convolve2d(data_step1, self.mean5kernel, boundary='symm', mode='same')
 
             preprocessed_data.append(_preprocessed_data)
-        # logging.debug(f'CustomDataset - datashape: {data_step1.shape}, {_preprocessed_data.shape}')
+        logging.debug(f'CustomDataset - datashape: {data_step1.shape}')
+        logging.debug(f'CustomDataset - datashape: {_preprocessed_data.shape}')
 
         return np.stack(preprocessed_data, axis=0)
 
     def __getitem__(self, idx):
         positive_idx = self._select_positive_idx(idx)
-        # logging.debug(f'CustomDataset - paired index: {idx}, {positive_idx}, {positive_idx-idx}')
+        logging.debug(f'CustomDataset - paired index: {idx}, {positive_idx}, {positive_idx-idx}')
         return self._preprocess(self.data[idx]), self._preprocess(self.data[positive_idx])
 
 def load_data(data_path):

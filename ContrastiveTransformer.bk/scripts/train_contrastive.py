@@ -5,7 +5,6 @@ from tqdm import tqdm
 import logging
 import argparse
 from data.data_loader import CustomDataset, load_data
-from data.sample_data import prepare_met
 from models.transformer_encoder import TransformerEncoder
 from models.projection_head import ProjectionHead
 from models.model_utils import NT_XentLoss
@@ -206,12 +205,12 @@ def train_contrastive_model(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a contrastive learning model.")
     parser.add_argument('--config', type=str, default='config.single.test.json', help='Path to the configuration file')
+    parser.add_argument('--port', type=int, default=9330, help='Port for distributed training')
 
     args = parser.parse_args()
     
-    # Loading configures
+    print(args)
     config = read_config(args.config)
-
     set_logging_level(config.get('logging_level', 'INFO'))
 
     use_distributed = config['use_distributed']
@@ -226,23 +225,11 @@ if __name__ == "__main__":
     model_encoder_path = config['model_encoder_path']
     model_projection_path = config['model_projection_path']
 
-    prepare_train_data = config['prepare_train_data']
-
     logging.info(f"Read configuration from {args.config}")
     logging.info(json.dumps(config, indent=2))
 
-    # prepare data
-    if prepare_train_data:
-        prepare_met(
-            data_dir=config['raw_data_dir'], 
-            save_path=config['train_data_path'],
-            save_idx_path=config['train_data_index_path'],
-            time_range=config['train_period']
-        )
-        logging.info(f'Prepare data {config["train_data_path"]} with shape.')
-
-    data = load_data(config['train_data_path'])
-    logging.info(f'Loaded data from {config["train_data_path"]} with shape {data.shape}.')
+    data = load_data(config['data_path'])
+    logging.info(f'Loaded data from {config["data_path"]} with shape {data.shape}.')
 
     if use_distributed:
         import torch.multiprocessing as mp
