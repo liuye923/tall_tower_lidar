@@ -5,10 +5,12 @@ import os
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_and_norm_single_variable(data_dir, var, vname, time=None, da_min=None, da_max=None):
-    fname = f'{data_dir}/{var}.2001-2024.anomaly.nc'
+def load_and_norm_single_variable(data_dir, var, vname, time=None, da_min=None, da_max=None, file_suffix=None):
+    # fname = f'{data_dir}/{var}.2001-2024.anomaly_fldmean.nc'
+    fname = f'{data_dir}/{var}.{file_suffix}'
+    logging.debug(f'Loading data from: {fname}')
     
     with xr.open_dataset(fname) as ds:
         da = ds[vname]
@@ -28,14 +30,14 @@ def load_and_norm_single_variable(data_dir, var, vname, time=None, da_min=None, 
         logging.debug(f'{var}: {vmin}, {vmax}, {out.shape}')
     return out
 
-def load_and_norm_netcdf_data(data_dir, vrange, time=None):
+def load_and_norm_netcdf_data(data_dir, vrange, time=None, file_suffix=None):
     vars   = ['t500', 't850', 'z500', 'z850', '2t', 'sp']
     vnames = ['T',    'T',    'Z',    'Z',    'VAR_2T', 'SP']
         
     data_list = []
     for var, vname in zip(vars, vnames):
         data_list.append(
-            load_and_norm_single_variable(data_dir, var, vname, time, *vrange.loc[var])
+            load_and_norm_single_variable(data_dir, var, vname, time, *vrange.loc[var], file_suffix)
         )
 
     time = data_list[0].time
@@ -52,14 +54,18 @@ def load_and_norm_netcdf_data(data_dir, vrange, time=None):
 
 def save_preprocessed_data(data, save_path):
     np.save(save_path, data)
+    logging.info(f"Saving prepared met data to {save_path}")
+
 
 def prepare_met(
         data_dir='../ERA5_reduced/', 
         save_path='data/processed/preprocessed_data.2001-2020.npy',
         save_idx_path='data/processed/preprocessed_data.time.2001-2020.csv',
         time_range=("2001-01-01 00:00:00", "2020-12-31 23:00:00"),
+        file_suffix='2001-2024.anomaly_fldmean.nc',
+        range_path='global_range.2001-2020.csv',
 ):
-    range_path = f"{data_dir}/global_range.2001-2020.csv"
+    range_path = f"{data_dir}/{range_path}"
     logging.info(f"Extrating data from {data_dir} for the period of {time_range[0]}-{time_range[1]}")
 
     vrange = pd.read_csv(range_path, index_col=0)
@@ -67,7 +73,8 @@ def prepare_met(
     data, time = load_and_norm_netcdf_data(
         data_dir, 
         vrange,
-        time_range, 
+        time_range,
+        file_suffix,
     )
     save_preprocessed_data(data, save_path)
     pd.Series(time).to_csv(save_idx_path)

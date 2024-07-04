@@ -18,4 +18,5 @@ class TransformerEncoder(nn.Module):
         )
     
     def forward(self, x):
-        return self.encoder(x.type(torch.FloatTensor)).type(torch.FloatTensor)
+        device = x.device
+        return self.encoder(x.type(torch.FloatTensor).to(device)).type(torch.FloatTensor).to(device)

@@ -11,13 +11,14 @@ def convert_file_batch(file):
     myfile = Path(target_path)
     if not myfile.is_file():
         os.system(f'mkdir -p {folder}')
-        os.system(f"cdo -sellonlatbox,-127,-116,41,50 {file} {target_path}>/dev/null")
+#        os.system(f"cdo -sellonlatbox,-127,-116,41,50 {file} {target_path}>/dev/null")
+        os.system(f"cdo -sellonlatbox,-127,-116,41,50 {file} {target_path}")
 
     return True
 
 
-files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5_processed/[uvzt]*/**/*.nc")
-#files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5/e5.oper.an.sfc/**/*.nc")
+#files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5_processed/[uvzt]*/**/*.nc")
+files = glob.glob("/pscratch/sd/y/yeliu/MetOcean/ERA5_processed/z500/202311/*.nc")
 
 print(len(files))
 cks = 2
