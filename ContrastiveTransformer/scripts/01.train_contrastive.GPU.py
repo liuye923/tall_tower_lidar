@@ -38,7 +38,8 @@ def train_contrastive_model(
 
     # Example parameters, adjust as necessary
     image_size = (92, 112)  # Example dimensions of your data
-    patch_size = (92, 112)  # Set patch_size to full image for testing
+    # patch_size = (92, 112)  # Set patch_size to full image for testing
+    patch_size = (23, 28)  # Set patch_size to full image for testing
     num_layers = 6
     num_heads = 8
     hidden_dim = 512
@@ -75,7 +76,7 @@ def train_contrastive_model(
     logging.info(f"Dataset size: {len(train_dataset)}, Train_DataLoader length: {len(train_loader)}")
     logging.info(f"Dataset size: {len(val_dataset)}, Val_DataLoader length: {len(val_loader)}")
 
-    writer = SummaryWriter('scripts/contrastive_learning_experiment')
+    writer = SummaryWriter('runs/allmean.4patch')
 
     for epoch in range(start_epoch, num_epochs):
         epoch_start_time = time.time()
@@ -147,6 +148,10 @@ def train_contrastive_model(
 
         logging.info(f"Epoch {epoch+1}, Train_Loss: {train_loss}, Val_Loss: {val_loss}")
         save_checkpoint(epoch + 1, model, projection_head, optimizer, checkpoint_path)
+        if (epoch % 10 == 0) and (epoch>0): 
+            torch.save(model.state_dict(), model_encoder_path.replace('.pth', f'.e{epoch}.pth'))
+            torch.save(projection_head.state_dict(), model_projection_path.replace('.pth', f'.e{epoch}.pth'))
+
 
     writer.close()
     torch.save(model.state_dict(), model_encoder_path)
