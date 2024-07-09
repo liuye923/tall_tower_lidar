@@ -36,7 +36,8 @@ def train_contrastive_model(
 
     # Example parameters, adjust as necessary
     image_size = (92, 112)  # Example dimensions of your data
-    patch_size = (92, 112)  # Set patch_size to full image for testing
+    # patch_size = (92, 112)  # Set patch_size to full image for testing
+    patch_size = (23, 28)  # Set patch_size to full image for testing
     num_layers = 6
     num_heads = 8
     hidden_dim = 512
